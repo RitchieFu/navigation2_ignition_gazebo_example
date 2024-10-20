@@ -118,6 +118,15 @@ def generate_launch_description():
         output="screen",
         arguments=["-d", LaunchConfiguration("rvizconfig")],
     )
+    # Ritchie Fu 10/20/24, this adds teleop functionality to the robot
+    # must type "ros2 run teleop_twist_keyboard teleop_twist_keyboard" in the terminal to start driving the robot.
+    teleop_node = Node(
+        package="teleop_twist_keyboard",
+        executable="teleop_twist_keyboard",
+        name="teleop_twist_keyboard",
+        output="screen",
+        remappings=[("/cmd_vel", "/cmd_vel")]
+    )
     waiting_navigation = RegisterEventHandler(
         OnProcessIO(
             target_action=toolbox,
@@ -170,6 +179,7 @@ def generate_launch_description():
                 description="Start GZ in hedless mode and don't start RViz (overrides use_rviz)",
             ),
             bringup,
+            teleop_node,
             waiting_toolbox,
             waiting_navigation,
             waiting_success,
